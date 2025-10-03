@@ -10,14 +10,14 @@ namespace ScoopHelper
             Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             Console.WriteLine("潇然软件商店Scoop助手");
             Console.WriteLine($"当前版本: {version}");
-            Console.WriteLine(new string('=', 22));
+            Console.WriteLine(new string('=', 24));
 
             Console.WriteLine("检查系统环境...");
 
             // 判断系统版本，仅支持 Windows 10 及以上
             if (System.Environment.OSVersion.Version.Major < 10)
             {
-                Console.WriteLine($"错误: 仅支持 Windows 10 及以上版本，当前为：{System.Environment.OSVersion.Version}");
+                Console.WriteLine($"错误: 仅支持 Windows 10 及以上版本，当前为: {System.Environment.OSVersion.Version}");
                 Console.WriteLine("按任意键退出...");
                 Console.ReadKey();
                 return;
@@ -33,72 +33,7 @@ namespace ScoopHelper
             {
                 Console.WriteLine("Scoop 未安装！");
 
-                // 询问用户是否安装
-                Console.Write("是否安装 Scoop? (Y/N，默认 5 秒后自动安装): ");
-
-                bool shouldInstall = false;
-                bool userResponded = false;
-
-                // 倒计时 5s，期间可以输入
-                int seconds = 5;
-                for (int i = seconds; i > 0; i--)
-                {
-                    if (Console.KeyAvailable)
-                    {
-                        var key = Console.ReadKey(true);
-                        userResponded = true;
-                        if (key.Key == ConsoleKey.Y)
-                        {
-                            shouldInstall = true;
-                            Console.WriteLine("Y");
-                            break;
-                        }
-                        else if (key.Key == ConsoleKey.N)
-                        {
-                            shouldInstall = false;
-                            Console.WriteLine("N");
-                            Console.WriteLine("用户取消安装");
-                            Console.WriteLine("按任意键退出...");
-                            Console.ReadKey();
-                            return;
-                        }
-                    }
-
-                    if (!userResponded)
-                    {
-                        Console.Write($"\r是否安装 Scoop? (Y/N，默认 {i} 秒后自动安装): ");
-                        System.Threading.Thread.Sleep(1000);
-                    }
-                }
-
-                if (!userResponded)
-                {
-                    shouldInstall = true;
-                    Console.WriteLine("\r" + new string(' ', 60));
-                    Console.WriteLine("自动确认安装 Scoop");
-                }
-
-                if (shouldInstall)
-                {
-                    Console.WriteLine("开始安装 Scoop...");
-
-                    Utils.RunPsCommand("(New-Object System.Net.WebClient).DownloadString('http://c.xrgzs.top/c/scoop') | iex");
-
-                    // 刷新环境变量
-                    Utils.RefreshEnvironmentVariables();
-
-                    if (ScoopManager.IsScoopInstalled())
-                    {
-                        Console.WriteLine("Scoop 安装成功！");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Scoop 安装失败，请手动检查！");
-                        Console.WriteLine("按任意键退出...");
-                        Console.ReadKey();
-                        return;
-                    }
-                }
+                ScoopManager.InstallScoop();
             }
 
 
@@ -114,7 +49,7 @@ namespace ScoopHelper
                     string decodedCommand = System.Text.Encoding.UTF8.GetString(data);
                     if (!string.IsNullOrWhiteSpace(decodedCommand))
                     {
-                        Console.WriteLine("从文件名中检测到命令：" + decodedCommand);
+                        Console.WriteLine("从文件名中检测到命令: " + decodedCommand);
                         args = decodedCommand.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     }
                 }
@@ -155,10 +90,10 @@ namespace ScoopHelper
             }
             else
             {
-                Console.WriteLine("错误：没有提供任何命令！");
+                Console.WriteLine("错误: 没有提供任何命令！");
                 Console.WriteLine("用法: ScoopHelper.exe install <app1> <app2> ...");
                 Console.WriteLine("      ScoopHelper.exe <scoop-commands>");
-                Console.WriteLine("亦或者将 Scoop 命令 Base64 编码（UTF-8）到文件名，如：ScoopHelper-<Base64内容>.exe");
+                Console.WriteLine("亦或者将 Scoop 命令 Base64 编码（UTF-8）到文件名，如: ScoopHelper-<Base64内容>.exe");
             }
 
             // 等待用户按键退出
@@ -166,6 +101,6 @@ namespace ScoopHelper
             Console.ReadKey();
         }
 
-       
+
     }
 }

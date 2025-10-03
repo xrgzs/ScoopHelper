@@ -21,7 +21,7 @@ namespace ScoopHelper
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"警告：刷新环境变量时出错: {ex.Message}");
+                Console.WriteLine($"警告: 刷新环境变量时出错: {ex.Message}");
             }
         }
 
@@ -82,6 +82,9 @@ namespace ScoopHelper
         // PowerShell 命令通用封装，实时输出内容，返回错误码和输出
         public static (int exitCode, string output) RunPsCommand(string command)
         {
+
+            Console.WriteLine("执行命令: " + command);
+
             string psPath = Which("pwsh") ?? Which("powershell");
 
             if (string.IsNullOrEmpty(psPath))
@@ -107,7 +110,7 @@ namespace ScoopHelper
             {
                 if (e.Data != null)
                 {
-                    Console.WriteLine(e.Data);
+                    Console.WriteLine("> " + e.Data);
                     outputBuilder.AppendLine(e.Data);
                 }
             };
@@ -116,7 +119,7 @@ namespace ScoopHelper
             {
                 if (e.Data != null)
                 {
-                    Console.WriteLine("错误: " + e.Data);
+                    Console.WriteLine("× " + e.Data);
                     //errorBuilder.AppendLine(e.Data);
                 }
             };

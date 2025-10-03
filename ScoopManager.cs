@@ -33,7 +33,83 @@ namespace ScoopHelper
 
             return directoryExists && scoopInPath;
         }
-      
+
+        // 安装 Scoop
+        public static void InstallScoop()
+        {
+            // 询问用户是否安装
+            Console.Write("是否安装 Scoop? (Y/N，默认 5 秒后自动安装): ");
+
+            bool shouldInstall = false;
+            bool userResponded = false;
+
+            // 倒计时 5s，期间可以输入
+            int seconds = 5;
+            for (int i = seconds; i > 0; i--)
+            {
+                if (Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey(true);
+                    userResponded = true;
+                    if (key.Key == ConsoleKey.Y)
+                    {
+                        shouldInstall = true;
+                        Console.WriteLine("Y");
+                        break;
+                    }
+                    else if (key.Key == ConsoleKey.N)
+                    {
+                        shouldInstall = false;
+                        Console.WriteLine("N");
+                        Console.WriteLine("用户取消安装");
+                        Console.WriteLine("按任意键退出...");
+                        Console.ReadKey();
+                        Environment.Exit(1);
+                    }
+                }
+
+                if (!userResponded)
+                {
+                    Console.Write($"\r是否安装 Scoop? (Y/N，默认 {i} 秒后自动安装): ");
+                    System.Threading.Thread.Sleep(1000);
+                }
+            }
+
+            if (!userResponded)
+            {
+                shouldInstall = true;
+                Console.WriteLine("\r" + new string(' ', 60));
+                Console.WriteLine("自动确认安装 Scoop");
+            }
+
+            if (shouldInstall)
+            {
+                Console.WriteLine("开始安装 Scoop...");
+
+                Utils.RunPsCommand("(New-Object System.Net.WebClient).DownloadString('http://c.xrgzs.top/c/scoop') | iex");
+
+                // 刷新环境变量
+                Utils.RefreshEnvironmentVariables();
+
+
+                Console.WriteLine("Scoop 环境变量已刷新。");
+            }
+
+            // 检查是否安装成功
+            if (ScoopManager.IsScoopInstalled())
+            {
+                Console.WriteLine("Scoop 安装成功！");
+            }
+            else
+            {
+                Console.WriteLine("Scoop 安装失败，请手动检查！");
+                Console.WriteLine("按任意键退出...");
+                Console.ReadKey();
+                Environment.Exit(1);
+            }
+        }
+
+
         // 安装指定软件
         public static bool InstallApp(string appName)
         {
