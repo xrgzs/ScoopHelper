@@ -75,10 +75,14 @@ namespace ScoopHelper
 
             // 检查应用是否已安装
             Console.WriteLine("正在检查应用是否已安装...");
-            var (installedExitCode, installedVersion) = Utils.RunPsCommand($"(scoop info {appName}).Installed");
+            var (installedExitCode, installedVersions) = Utils.RunPsCommand($"(scoop info {appName}).Installed");
 
-            if (installedExitCode == 0 && !string.IsNullOrWhiteSpace(installedVersion))
+            if (installedExitCode == 0 && !string.IsNullOrWhiteSpace(installedVersions))
             {
+                // 提取已安装版本（可能有多个版本，用换行符分隔，取最后一个）
+                var versions = installedVersions.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                var installedVersion = versions[versions.Length - 1].Trim();
+
                 // 应用已安装
                 if (installedVersion == latestVersion)
                 {
