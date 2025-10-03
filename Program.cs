@@ -6,7 +6,10 @@ namespace ScoopHelper
     {
         static void Main(string[] args)
         {
+
+            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             Console.WriteLine("潇然软件商店Scoop助手");
+            Console.WriteLine($"当前版本: {version}");
             Console.WriteLine(new string('=', 22));
 
             Console.WriteLine("检查系统环境...");
