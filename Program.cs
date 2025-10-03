@@ -18,9 +18,8 @@ namespace ScoopHelper
             if (System.Environment.OSVersion.Version.Major < 10)
             {
                 Console.WriteLine($"错误: 仅支持 Windows 10 及以上版本，当前为: {System.Environment.OSVersion.Version}");
-                Console.WriteLine("按任意键退出...");
-                Console.ReadKey();
-                return;
+                Utils.PromptAnyKey("退出程序");
+                Environment.Exit(1);
             }
 
             // 判断 Scoop 是否安装
