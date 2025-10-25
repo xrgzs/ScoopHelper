@@ -80,6 +80,25 @@ namespace ScoopHelper
                         }
                         break;
 
+                    case "reinstall":
+                        // 重新安装指定的软件
+                        if (args.Length < 2)
+                        {
+                            Console.WriteLine("请指定要重新安装的软件名称！");
+                            break;
+                        }
+
+                        // 支持一次重新安装多个软件
+                        for (int i = 1; i < args.Length; i++)
+                        {
+                            if (!args[i].StartsWith("-"))
+                            {
+                                ScoopManager.UninstallApp(args[i]);
+                                ScoopManager.InstallApp(args[i]);
+                            }
+                        }
+                        break;
+
                     default:
                         // 直接转发给 scoop
                         string command = "scoop " + string.Join(" ", args);
@@ -91,6 +110,7 @@ namespace ScoopHelper
             {
                 Console.WriteLine("错误: 没有提供任何命令！");
                 Console.WriteLine("用法: ScoopHelper.exe install <app1> <app2> ...");
+                Console.WriteLine("      ScoopHelper.exe reinstall <app1> <app2> ...");
                 Console.WriteLine("      ScoopHelper.exe <scoop-commands>");
                 Console.WriteLine("亦或者将 Scoop 命令 Base64 编码（UTF-8）到文件名，如: ScoopHelper-<Base64内容>.exe");
             }

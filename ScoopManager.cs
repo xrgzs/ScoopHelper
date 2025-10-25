@@ -165,5 +165,50 @@ namespace ScoopHelper
                 }
             }
         }
+
+        // 卸载指定软件
+        public static bool UninstallApp(string appName)
+        {
+            if (string.IsNullOrWhiteSpace(appName))
+            {
+                Console.WriteLine("应用名不能为空。");
+                return false;
+            }
+
+            if (!IsScoopInstalled())
+            {
+                Console.WriteLine("错误: Scoop 未安装！");
+                return false;
+            }
+
+            // 检查应用是否已安装
+            Console.WriteLine("正在检查应用是否已安装...");
+            var (installedExitCode, installedVersions) = Utils.RunPsCommand($"(scoop info {appName}).Installed");
+
+            if (installedExitCode == 0 && !string.IsNullOrWhiteSpace(installedVersions))
+            {
+
+                // 应用已安装
+                var (upgradeExitCode, _) = Utils.RunPsCommand($"scoop uninstall {appName}");
+
+                if (upgradeExitCode == 0)
+                {
+                    Console.WriteLine($"{appName} 卸载成功！");
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine($"{appName} 卸载失败！");
+                    return false;
+                }
+            }
+            else
+            {
+                // 应用未安装
+                Console.WriteLine($"{appName} 未安装！");
+                return false;
+            }
+        }
+
     }
 }
